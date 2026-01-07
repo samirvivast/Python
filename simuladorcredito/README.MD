@@ -1,4 +1,4 @@
-![Preview](https://github.com/samirvivast/Python/blob/main/simuladorcredito/Image1.JPG)
+![Preview](https://github.com/samirvivast/Python/blob/main/simuladorcredito/Image1.png)
 
 Simulador de credito lbre inversion creado por Samir Vivas | 2025 | contacto: bryansamir@gmail.com
 
@@ -8,4 +8,5 @@ Librerias de python utilizadas:
 1. openpyxl
 
 2. reportlab
+
 
