@@ -83,7 +83,7 @@ def juego():
         while game_close:
             ventana.fill(negro)
             mensaje("Has perdido :(", blanco)
-            opcion1("Presiona C para Continuar", blanco)
+            opcion1("Presiona C para Reintentar", blanco)
             opcion2("Presiona Q para Salir", blanco)
             opcion3("Creado por Samir Vivas | 2025 | bryansamir@gmail.com", blanco)
             
