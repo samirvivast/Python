@@ -1,8 +1,9 @@
-from tkinter import * #import libraries
+from tkinter import *
 from tkinter import messagebox
 import sqlite3
+import webbrowser
 
-#---------- Funciones - Functions ----------------------
+# ---------------------- Funciones ----------------------
 def conexionBBDD():
     miConexion=sqlite3.connect("usuarios")
     miCursor=miConexion.cursor()
@@ -26,7 +27,6 @@ def salirAplicacion():  #Funcion
     if valor == "yes":
         root.destroy()
 
-#------- Funcion limpiar campos - Clean fields --------
 def LimpiarCampos():
     miNombre.set("")
     miId.set("")
@@ -36,7 +36,7 @@ def LimpiarCampos():
     textoComentario.delete(1.0, END)
 
 
-#------- Funcion limpiar campos - Clean fields --------
+
 def borrar_campos():
     cuadroID.delete(0, END)
     cuadroNombre.delete(0, END)
@@ -45,7 +45,6 @@ def borrar_campos():
     cuadroDireccion.delete(0, END)
     textoComentario.delete("1.0", END)
 
-#------- Funcion crear registro en base de datos - Create --------
 def crear():
     miConexion=sqlite3.connect("usuarios")
     miCursor=miConexion.cursor()
@@ -58,33 +57,62 @@ def crear():
     miConexion.commit()
     messagebox.showinfo("BBDD", "Registro Insertado con Exito!")
 
-
-#------- Funcion leer registro de base de datos - Read --------
 def leer():
-    messagebox.showinfo("CRUD", "Función Leer ejecutada")
+    miConexion=sqlite3.connect("usuarios")
+    miCursor = miConexion.cursor()
 
-#------- Funcion actualizar registro de base de datos - Update --------
+    miCursor.execute("SELECT * FROM DATOSUSUARIOS WHERE ID=" + miId.get())
+
+    elUsuario = miCursor.fetchall()
+
+    for usuario in elUsuario:
+        miId.set(usuario[0])
+        miNombre.set(usuario[1])
+        miPass.set(usuario[2])
+        miApellido.set(usuario[3])
+        miDireccion.set(usuario[4])
+        textoComentario.insert(1.0, usuario[5])
+
+    miConexion.commit()
+
 def actualizar():
-    messagebox.showinfo("CRUD", "Función Actualizar ejecutada")
+    miConexion=sqlite3.connect("usuarios")
+    miCursor=miConexion.cursor()
+    miCursor.execute("UPDATE DATOSUSUARIOS SET NOMBRE_USUARIO='"+miNombre.get() +
+        "', PASSWORD='"+ miPass.get() +
+        "', APELLIDO='"+ miApellido.get() +
+        "', DIRECCION='"+ miDireccion.get() + 
+        "', COMENTARIOS='"+ textoComentario.get("1.0", END) + 
+        "' WHERE ID=" + miId.get())
+    
+    miConexion.commit()
+    messagebox.showinfo("BBDD", "Registro Actualizado con Exito!")
 
-#------- Funcion borrar registro de base de datos - Erase --------
-def borrar():
-    messagebox.showinfo("CRUD", "Función Borrar ejecutada")
+def eliminar():
+    miConexion=sqlite3.connect("usuarios")
+    miCursor=miConexion.cursor()
+    miCursor.execute("DELETE FROM DATOSUSUARIOS WHERE ID="+miId.get())
+    miConexion.commit()
+    messagebox.showinfo("BBDD", "Registro Borrado con Exito!")
 
-#------- Funcion para mostrar mensaje - Show a message --------
 def licencia():
-    messagebox.showinfo("Licencia", "Producto con fines educativos. Basic CRUD app created by Samir Vivas | 2025 | bryansamir@gmail.com")
+    messagebox.showinfo("Licencia", "Producto con fines educativos")
 
 def acerca_de():
-    messagebox.showinfo("Acerca de", "Ejemplo de aplicación con Tkinter y SQLite3")
+    messagebox.showinfo("Acerca de", "Creado por Samir Vivas | contacto: bryansamir@gmail.com ")
 
-# ---------- Ventana principal - Main window----------------------
+def donaciones():
+    webbrowser.open("https://sites.google.com/view/samirvivast/donaciones")
+
+
+
+# ---------------------- Ventana principal ----------------------
 root = Tk()
 root.title("Aplicación CRUD con Tkinter")
 root.geometry("400x400")
 root.config(width=400, height=400)
 
-# ---------- Menú ----------------------
+# ---------------------- Menú ----------------------
 barraMenu = Menu(root)
 root.config(menu=barraMenu, width=400, height=400)
 
@@ -94,7 +122,7 @@ bbddMenu.add_command(label="Conectar", command=conexionBBDD)
 bbddMenu.add_command(label="Salir", command=salirAplicacion)
 barraMenu.add_cascade(label="BBDD", menu=bbddMenu)
 
-# Menú Borrar - Erase
+# Menú Borrar
 borrarMenu = Menu(barraMenu, tearoff=0)
 borrarMenu.add_command(label="Borrar campos", command=borrar_campos)
 borrarMenu.add_command(label="Limpiar campos", command=LimpiarCampos)
@@ -107,16 +135,17 @@ crudMenu = Menu(barraMenu, tearoff=0)
 crudMenu.add_command(label="Crear", command=crear)
 crudMenu.add_command(label="Leer", command=leer)
 crudMenu.add_command(label="Actualizar", command=actualizar)
-crudMenu.add_command(label="Borrar", command=borrar)
+crudMenu.add_command(label="Borrar", command=eliminar)
 barraMenu.add_cascade(label="CRUD", menu=crudMenu)
 
-# Menú Ayuda - Help
+# Menú Ayuda
 ayudaMenu = Menu(barraMenu, tearoff=0)
+ayudaMenu.add_command(label="Donaciones", command=donaciones)
 ayudaMenu.add_command(label="Licencia", command=licencia)
 ayudaMenu.add_command(label="Acerca de…", command=acerca_de)
 barraMenu.add_cascade(label="Ayuda", menu=ayudaMenu)
 
-# ------- Comienzo de campos - Entry ----------------------
+# ---------------------- Comienzo de campos ----------------------
 miFrame = Frame(root)
 miFrame.pack()
 
@@ -126,29 +155,29 @@ miApellido=StringVar()
 miPass=StringVar()
 miDireccion=StringVar()
 
-# Campo ID - Entry ID
+# Campo ID
 cuadroID = Entry(miFrame, textvariable=miId)
 cuadroID.grid(row=0, column=1, padx=10, pady=10)
 
-# Campo Nombre - Field Name
+# Campo Nombre
 cuadroNombre = Entry(miFrame, textvariable=miNombre)
 cuadroNombre.grid(row=1, column=1, padx=10, pady=10)
 cuadroNombre.config(fg="red", justify="right")
 
-# Campo Contraseña - Field Password
+# Campo Password
 cuadroPass = Entry(miFrame, textvariable=miPass)
 cuadroPass.grid(row=2, column=1, padx=10, pady=10)
 cuadroPass.config(show="*")
 
-# Campo Apellido - Field Surname
+# Campo Apellido
 cuadroApellido = Entry(miFrame, textvariable=miApellido)
 cuadroApellido.grid(row=3, column=1, padx=10, pady=10)
 
-# Campo Dirección - Field Address
+# Campo Dirección
 cuadroDireccion = Entry(miFrame, textvariable=miDireccion)
 cuadroDireccion.grid(row=4, column=1, padx=10, pady=10)
 
-# Campo Comentarios - Field Comments
+# Campo Comentarios
 textoComentario = Text(miFrame, width=16, height=5)
 textoComentario.grid(row=5, column=1, padx=10, pady=10)
 
@@ -157,7 +186,7 @@ scrollVert = Scrollbar(miFrame, command=textoComentario.yview)
 scrollVert.grid(row=5, column=2, sticky="nsew")
 textoComentario.config(yscrollcommand=scrollVert.set)
 
-# ------- Aqui comienza los Label - Labels----------------------
+# ---------------------- Aqui comienza los Label ----------------------
 idLabel=Label(miFrame, text="Id: ")
 idLabel.grid(row=0, column=0, sticky="e", padx=10, pady=10)
 
@@ -176,24 +205,22 @@ direccionLabel.grid(row=4, column=0, sticky="e", padx=10, pady=10)
 comentarioLabel=Label(miFrame, text="Comentario: ")
 comentarioLabel.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
-# -------- Aqui van los Botones - Buttons----------------------
+# ---------------------- Aqui van los Botones ----------------------
 miFrame2 = Frame(root)
 miFrame2.pack()
 
 botonCrear=Button(miFrame2, text="Crear", command=crear)
 botonCrear.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
-botonLeer=Button(miFrame2, text="Leer")
+botonLeer=Button(miFrame2, text="Leer", command=leer)
 botonLeer.grid(row=1, column=1, sticky="e", padx=10, pady=10)
 
-botonActualizar=Button(miFrame2, text="Actualizar")
+botonActualizar=Button(miFrame2, text="Actualizar", command=actualizar)
 botonActualizar.grid(row=1, column=2, sticky="e", padx=10, pady=10)
 
-botonBorrar=Button(miFrame2, text="Borrar")
+botonBorrar=Button(miFrame2, text="Borrar", command=eliminar)
 botonBorrar.grid(row=1, column=3, sticky="e", padx=10, pady=10)
 
 
-# -------- Loop principal - Main Loop ----------------------
+# ---------------------- Loop principal ----------------------
 root.mainloop()
-
-#Basic CRUD app created by Samir Vivas | 2025 | bryansamir@gmail.com
