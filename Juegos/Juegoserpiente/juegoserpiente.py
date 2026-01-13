@@ -1,3 +1,4 @@
+#Juego clasico de serpiente creado por Samir Vivas | 13-01-2026 | Contacto: bryansamir@gmail.com
 import pygame
 import time
 import random
