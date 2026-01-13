@@ -1,3 +1,4 @@
+#Juego de preguntas creado por Samir Vivas | 13-01-2026 | Contacto:  bryansamir@gmail.com
 import tkinter as tk
 from tkinter import PhotoImage, messagebox
 
